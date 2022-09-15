@@ -1,15 +1,10 @@
 import numpy as np
 from PIL import Image
 import os
+import sys
 
 char_ramp_10 = " .:-=+*#%@"
 char_ramp_70 = " .'`^\",:;Il!i><~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
-
-
-input_file = "images/martyrect.jpg"
-pix_sample_width = 5
-pix_sample_height = 5
-char_ramp = char_ramp_10
 
 
 def get_image(image_path):
@@ -18,8 +13,6 @@ def get_image(image_path):
     """
     im = Image.open(image_path, 'r')
     width, height = im.size
-    print("Width:", width)
-    print("Height:", height)
     pixel_values = np.array(im).reshape((height, width, 3))
     return pixel_values
 
@@ -51,17 +44,13 @@ def rgb_sum_to_char(rgb_sum, char_ramp):
     return char_ramp[index]
 
 
-def image_to_characters(image, width, height, char_ramp):
+def image_to_characters(image, width, height, char_ramp, row_factor):
     """
     return image as characters in string
     """
     res = ""
     pixels = get_image(image)
     x, y = 0, 0
-    # while y <= len(pixels) - (len(pixels) % height + height):
-    #     x = 0
-    #     # row
-    #     while x <= len(pixels[0]) - (len(pixels[0]) % width + width):
     while y + height < len(pixels):
         x = 0
         while x + width < len(pixels[0]):
@@ -69,12 +58,17 @@ def image_to_characters(image, width, height, char_ramp):
             res += rgb_sum_to_char(block_average_sum, char_ramp)
             x += width
         res += "\n"
-        y += height * 2
+        y += height * row_factor
     return res
 
 
 def write_to_file(s, input_file):
-    # output_file = "output/" + input_file + ".txt"
+    """
+    write string to output file in output folder, 
+    create output folder if doesn't exist
+    """
+    if not os.path.isdir("output"):
+        os.mkdir("output")
     last_slash = input_file.rfind("/")
     last_dot = input_file.rfind(".")
     output_file = "output/" + input_file[last_slash + 1:last_dot] + ".txt"
@@ -83,7 +77,12 @@ def write_to_file(s, input_file):
 
 
 if __name__ == "__main__":
+    input_file = "images/sleepy.jpg"
+    pix_sample_width = 5
+    pix_sample_height = 5
+    row_factor = 2
+    char_ramp = char_ramp_10
+
     image_str = image_to_characters(
-        input_file, pix_sample_width, pix_sample_height, char_ramp)
-    # output_file = "./output/" + input_file[:len(input_file) - 4] + ".txt"
+        input_file, pix_sample_width, pix_sample_height, char_ramp, row_factor)
     write_to_file(image_str, input_file)

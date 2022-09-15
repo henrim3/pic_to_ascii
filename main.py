@@ -1,11 +1,12 @@
 import numpy as np
 from PIL import Image
+import os
 
 char_ramp_10 = " .:-=+*#%@"
 char_ramp_70 = " .'`^\",:;Il!i><~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 
-input_image = "images/martyrect.jpg"
+input_file = "images/martyrect.jpg"
 pix_sample_width = 5
 pix_sample_height = 5
 char_ramp = char_ramp_10
@@ -72,8 +73,17 @@ def image_to_characters(image, width, height, char_ramp):
     return res
 
 
+def write_to_file(s, input_file):
+    # output_file = "output/" + input_file + ".txt"
+    last_slash = input_file.rfind("/")
+    last_dot = input_file.rfind(".")
+    output_file = "output/" + input_file[last_slash + 1:last_dot] + ".txt"
+    with open(output_file, "w") as text_file:
+        text_file.write(s)
+
+
 if __name__ == "__main__":
     image_str = image_to_characters(
-        input_image, pix_sample_width, pix_sample_height, char_ramp)
-    with open("output.txt", "w") as text_file:
-        text_file.write(image_str)
+        input_file, pix_sample_width, pix_sample_height, char_ramp)
+    # output_file = "./output/" + input_file[:len(input_file) - 4] + ".txt"
+    write_to_file(image_str, input_file)

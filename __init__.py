@@ -50,15 +50,7 @@ def image_to_characters(image, width, height, char_ramp, row_factor):
     """
     res = ""
     pixels = get_image(image)
-    x, y = 0, 0
-    while y + height < len(pixels):
-        x = 0
-        while x + width < len(pixels[0]):
-            block_average_sum = average_rgb_sum(x, y, width, height, pixels)
-            res += rgb_sum_to_char(block_average_sum, char_ramp)
-            x += width
-        res += "\n"
-        y += height * row_factor
+    
     return res
 
 
@@ -77,12 +69,22 @@ def write_to_file(s, input_file):
 
 
 if __name__ == "__main__":
-    input_file = "images/sleepy.jpg"
-    pix_sample_width = 5
-    pix_sample_height = 5
+    input_file = "images/dimitri.jpg"
+    pix_sample_width = 1
+    pix_sample_height = 1
     row_factor = 2
-    char_ramp = char_ramp_10
+    char_ramp = char_ramp_70
+    
+    pixels = get_image(input_file)
 
-    image_str = image_to_characters(
-        input_file, pix_sample_width, pix_sample_height, char_ramp, row_factor)
+    image_str = ""
+    x, y = 0, 0
+    while y + pix_sample_height < len(pixels):
+        x = 0
+        while x + pix_sample_width < len(pixels[0]):
+            block_average_sum = average_rgb_sum(x, y, pix_sample_width, pix_sample_height, pixels)
+            image_str += rgb_sum_to_char(block_average_sum, char_ramp)
+            x += pix_sample_width
+        image_str += "\n"
+        y += pix_sample_height * row_factor
     write_to_file(image_str, input_file)
